@@ -24,7 +24,7 @@ body {
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1200px;
     width: 100%;
     background: white;
     border-radius: 20px;
@@ -34,9 +34,9 @@ body {
 
 h1 {
     color: #004d66;
-    margin-bottom: 10px;
     text-align: center;
     font-size: 2.5em;
+    margin-bottom: 10px;
 }
 
 .subtitle {
@@ -46,15 +46,21 @@ h1 {
     font-size: 1.1em;
 }
 
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
 #scene {
     position: relative;
     width: 100%;
-    height: 500px;
+    aspect-ratio: 4/3;
     border: 3px solid #004d66;
     border-radius: 15px;
     overflow: hidden;
-    background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 70%, #87ceeb 100%);
-    margin: 20px 0;
+    background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 50%, #90EE90 75%, #8b7355 100%);
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -62,36 +68,14 @@ h1 {
 #sun {
     position: absolute;
     top: 30px;
-    left: 50px;
+    right: 50px;
     width: 100px;
     height: 100px;
     background: radial-gradient(circle at 30% 30%, #ffff99, #ffcc00);
     border-radius: 50%;
-    box-shadow: 0 0 40px rgba(255, 200, 0, 0.8);
+    box-shadow: 0 0 50px rgba(255, 200, 0, 0.9);
     animation: sunRotate 8s linear infinite;
-}
-
-#sun::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 100, 0.3), transparent);
-    border-radius: 50%;
-}
-
-#sun::after {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 15px solid #ffcc00;
-    opacity: 0.7;
+    z-index: 1;
 }
 
 @keyframes sunRotate {
@@ -99,51 +83,38 @@ h1 {
     100% { transform: rotate(360deg); }
 }
 
-/* Cloud */
-#cloud {
+/* Clouds */
+.cloud {
     position: absolute;
-    top: 60px;
-    right: 100px;
-    font-size: 100px;
-    z-index: 10;
-    opacity: 0.3;
-    transition: opacity 0.5s;
+    top: 50px;
+    width: 100px;
+    height: 50px;
+    background: white;
+    border-radius: 50px;
+    box-shadow: -15px 15px 0 -5px white, 15px 15px 0 -5px white;
+    z-index: 2;
 }
 
-#cloud.active {
-    opacity: 1;
+#cloud1 {
+    left: 50px;
 }
 
-/* Mountain */
-.mountain {
-    position: absolute;
-    bottom: 120px;
-    width: 0;
-    height: 0;
-    border-left: 150px solid transparent;
-    border-right: 150px solid transparent;
-    border-bottom: 200px solid #8b7355;
-}
-
-.mountain.left {
-    left: -50px;
-}
-
-.mountain.right {
-    right: -50px;
+#cloud2 {
+    left: 250px;
 }
 
 /* Trees */
 .tree {
     position: absolute;
-    z-index: 2;
+    bottom: 80px;
+    z-index: 3;
 }
 
 .tree-trunk {
     position: absolute;
     bottom: 0;
-    width: 20px;
-    height: 60px;
+    width: 15px;
+    height: 50px;
     background: #6b4423;
     left: 50%;
     transform: translateX(-50%);
@@ -154,25 +125,50 @@ h1 {
     bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     background: #2d5016;
     border-radius: 50%;
 }
 
-/* Water */
+#tree1 {
+    left: 15%;
+}
+
+#tree2 {
+    right: 15%;
+}
+
+/* Mountains */
+.mountain {
+    position: absolute;
+    bottom: 80px;
+    width: 0;
+    height: 0;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    border-bottom: 150px solid #8b7355;
+    z-index: 0;
+}
+
+#mountain1 {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Water/Lake */
 #water {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 120px;
+    height: 80px;
     background: linear-gradient(180deg, #1e88e5 0%, #0d47a1 100%);
-    border-top: 3px solid #00796b;
+    z-index: 1;
 }
 
-.water-wave {
+.wave {
     position: absolute;
-    top: 0;
+    bottom: 0;
     width: 200%;
     height: 20px;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 20"><defs><pattern id="wave" x="0" y="0" width="120" height="20" patternUnits="userSpaceOnUse"><path d="M0,10 Q30,0 60,10 T120,10" stroke="%231e88e5" fill="none"/></pattern></defs><rect width="1200" height="20" fill="url(%23wave)"/></svg>');
@@ -184,83 +180,147 @@ h1 {
     100% { transform: translateX(-120px); }
 }
 
-/* Animations */
-.evaporation {
+/* Arrows and Paths */
+.arrow {
     position: absolute;
-    bottom: 50px;
-    font-size: 24px;
-    color: white;
-    animation: naik 3s linear forwards;
-    z-index: 3;
-    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+    opacity: 0;
+    transition: opacity 0.5s;
 }
 
-.transpiration {
+.arrow.active {
+    opacity: 1;
+}
+
+/* SVG Arrows */
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Labels */
+.label {
+    position: absolute;
+    background: white;
+    border: 2px solid #004d66;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #004d66;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.label.active {
+    opacity: 1;
+}
+
+/* Animation elements */
+.vapor {
     position: absolute;
     font-size: 20px;
-    animation: naik 3s linear forwards;
-    z-index: 3;
-    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+    z-index: 4;
+    animation: riseVapor 2.5s ease-in forwards;
 }
 
 .rain {
     position: absolute;
-    font-size: 20px;
-    color: #1e88e5;
-    animation: turun 2s linear forwards;
-    z-index: 3;
+    font-size: 18px;
+    z-index: 4;
+    animation: fallRain 1.5s linear forwards;
 }
 
-@keyframes naik {
-    0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-250px) scale(0.8);
-        opacity: 0;
-    }
-}
-
-@keyframes turun {
-    0% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(200px);
-        opacity: 0;
-    }
-}
-
-@keyframes infiltrasi {
-    0% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(100px);
-        opacity: 0;
-    }
-}
-
-.infiltrasi {
+.infiltration {
     position: absolute;
     font-size: 16px;
-    animation: infiltrasi 2s linear forwards;
+    z-index: 4;
+    animation: goDown 1.5s linear forwards;
+}
+
+@keyframes riseVapor {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-150px);
+    }
+}
+
+@keyframes fallRain {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(150px);
+    }
+}
+
+@keyframes goDown {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(80px);
+    }
+}
+
+/* Info Panel */
+.info-panel {
+    background: #f0f8ff;
+    border-left: 5px solid #004d66;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #004d66;
+}
+
+.info-description {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #333;
+}
+
+.info-detail {
+    background: white;
+    padding: 12px;
+    border-left: 4px solid #764ba2;
+    border-radius: 5px;
+    font-style: italic;
+    color: #764ba2;
+    font-size: 13px;
 }
 
 /* Control Panel */
 .control-panel {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 12px;
     margin: 20px 0;
 }
 
 button {
-    padding: 14px 18px;
-    font-size: 15px;
+    padding: 14px;
+    font-size: 14px;
     font-weight: bold;
     border: none;
     border-radius: 10px;
@@ -273,7 +333,7 @@ button {
     align-items: center;
     gap: 5px;
     text-align: center;
-    min-height: 70px;
+    min-height: 65px;
     justify-content: center;
 }
 
@@ -288,12 +348,8 @@ button {
 
 .step-btn.active {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    box-shadow: 0 0 20px rgba(245, 87, 108, 0.5);
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+    box-shadow: 0 0 25px rgba(245, 87, 108, 0.6);
+    transform: scale(1.05);
 }
 
 .reset-btn {
@@ -301,140 +357,32 @@ button:disabled {
     grid-column: 1 / -1;
 }
 
-/* Status Display */
-.status-section {
-    background: #e0f6ff;
-    border-radius: 10px;
-    border-left: 5px solid #004d66;
-    padding: 20px;
-    margin: 20px 0;
+.reset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-.status-title {
-    font-size: 22px;
-    font-weight: bold;
-    color: #004d66;
-    margin-bottom: 10px;
-}
-
-.status-description {
-    font-size: 16px;
-    color: #333;
-    line-height: 1.6;
-    margin: 10px 0;
-}
-
-.status-details {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #764ba2;
-    font-style: italic;
-    color: #764ba2;
-    margin-top: 10px;
-}
-
-/* Quiz Section */
-.quiz-section {
-    display: none;
-    margin-top: 30px;
-    padding: 20px;
-    background: #f0f8ff;
-    border-radius: 15px;
-    border: 3px solid #004d66;
-}
-
-.quiz-section.active {
-    display: block;
-}
-
-.quiz-section h2 {
-    color: #004d66;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-}
-
-.quiz-question {
-    background: white;
-    padding: 20px;
-    margin: 15px 0;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.quiz-question h3 {
-    color: #004d66;
-    margin-bottom: 15px;
-    font-size: 1.1em;
-}
-
-.quiz-option {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin: 8px 0;
-    background: white;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.quiz-option:hover {
-    background: #e0f6ff;
-    border-color: #004d66;
-}
-
-.quiz-option input[type="radio"] {
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-.quiz-option.correct {
-    background: #c8e6c9;
-    border-color: #4caf50;
-}
-
-.quiz-option.incorrect {
-    background: #ffcdd2;
-    border-color: #f44336;
-}
-
-/* Score Display */
-.score-display {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    margin-top: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.score-display h3 {
-    color: #004d66;
-    font-size: 1.3em;
-    margin-bottom: 10px;
-}
-
-.score-value {
-    font-size: 3em;
-    font-weight: bold;
-    color: #764ba2;
-    margin: 10px 0;
-}
-
-.score-message {
-    font-size: 1.1em;
-    color: #333;
-    margin: 10px 0;
-}
-
-.medal {
-    font-size: 4em;
-    margin: 10px 0;
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    #scene {
+        aspect-ratio: auto;
+        height: 400px;
+    }
+
+    .info-panel {
+        order: -1;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 15px;
@@ -445,22 +393,25 @@ button:disabled {
     }
 
     #scene {
-        height: 350px;
+        height: 300px;
     }
 
     button {
-        padding: 12px 15px;
-        font-size: 14px;
-        min-height: 65px;
+        padding: 12px;
+        font-size: 13px;
+        min-height: 60px;
     }
 
     .control-panel {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     }
 
-    .status-description {
-        font-size: 14px;
+    .info-title {
+        font-size: 18px;
+    }
+
+    .info-description {
+        font-size: 13px;
     }
 }
 </style>
@@ -471,30 +422,52 @@ button:disabled {
     <h1>🌧️ Simulasi Daur Air Interaktif</h1>
     <p class="subtitle">Pelajari 5 proses siklus air yang menakjubkan!</p>
 
-    <div id="scene">
-        <div id="sun"></div>
-        <div id="cloud">☁️</div>
-        <div class="tree" id="tree1" style="left: 15%; bottom: 120px;">
-            <div class="tree-trunk"></div>
-            <div class="tree-leaves"></div>
-        </div>
-        <div class="tree" id="tree2" style="right: 15%; bottom: 120px;">
-            <div class="tree-trunk"></div>
-            <div class="tree-leaves"></div>
-        </div>
-        <div class="mountain left"></div>
-        <div class="mountain right"></div>
-        <div id="water">
-            <div class="water-wave"></div>
-        </div>
-    </div>
+    <div class="main-content">
+        <div id="scene">
+            <!-- SVG for arrows -->
+            <svg id="arrowSvg"></svg>
 
-    <div class="status-section">
-        <div class="status-title" id="statusTitle">👋 Selamat Datang</div>
-        <div class="status-description" id="statusDescription">
-            Pilih salah satu tombol di bawah untuk melihat proses daur air. Setiap tombol akan menampilkan animasi dan penjelasan lengkap tentang tahap daur air tersebut.
+            <!-- Sun -->
+            <div id="sun"></div>
+
+            <!-- Clouds -->
+            <div class="cloud" id="cloud1"></div>
+            <div class="cloud" id="cloud2"></div>
+
+            <!-- Trees -->
+            <div class="tree" id="tree1">
+                <div class="tree-leaves"></div>
+                <div class="tree-trunk"></div>
+            </div>
+            <div class="tree" id="tree2">
+                <div class="tree-leaves"></div>
+                <div class="tree-trunk"></div>
+            </div>
+
+            <!-- Mountain -->
+            <div class="mountain" id="mountain1"></div>
+
+            <!-- Water/Lake -->
+            <div id="water">
+                <div class="wave"></div>
+            </div>
+
+            <!-- Labels -->
+            <div class="label" id="label-evaporation" style="left: 10%; top: 45%;">☀️ EVAPORASI</div>
+            <div class="label" id="label-transpiration" style="left: 25%; top: 35%;">🌱 TRANSPIRASI</div>
+            <div class="label" id="label-condensation" style="right: 10%; top: 20%;">❄️ KONDENSASI</div>
+            <div class="label" id="label-precipitation" style="right: 15%; top: 45%;">🌧️ PRESIPITASI</div>
+            <div class="label" id="label-infiltration" style="bottom: 15%; left: 50%; transform: translateX(-50%);">⬇️ INFILTRASI</div>
+            <div class="label" id="label-collection" style="bottom: 10%; left: 10%;">🌊 PENGUMPULAN</div>
         </div>
-        <div class="status-details" id="statusDetails"></div>
+
+        <div class="info-panel">
+            <div class="info-title" id="infoTitle">👋 Selamat Datang</div>
+            <div class="info-description" id="infoDescription">
+                Pilih salah satu tombol di bawah untuk melihat proses daur air. Setiap tombol akan menampilkan animasi dan penjelasan lengkap tentang tahap daur air tersebut.
+            </div>
+            <div class="info-detail" id="infoDetail"></div>
+        </div>
     </div>
 
     <div class="control-panel">
@@ -520,12 +493,6 @@ button:disabled {
         </button>
         <button class="reset-btn" onclick="resetSimulation()">🔄 Reset Simulasi</button>
     </div>
-
-    <div class="quiz-section" id="quizSection">
-        <h2>📝 Kuis Daur Air</h2>
-        <div id="quizContainer"></div>
-        <div class="score-display" id="scoreDisplay"></div>
-    </div>
 </div>
 
 <script>
@@ -536,184 +503,223 @@ const processes = [
         title: "☀️ EVAPORASI - Penguapan Air dari Permukaan",
         description: "Evaporasi adalah proses penguapan air di laut, sungai, dan danau karena panas matahari. Air berubah dari bentuk cair menjadi uap air yang tidak terlihat.",
         details: "Matahari memanaskan permukaan air dengan energi panas. Air ini kemudian menguap dan naik ke atmosfer. Proses ini adalah tahap pertama siklus air yang penting untuk menjaga keseimbangan air di bumi.",
-        animation: "evaporation"
+        labels: ['evaporation'],
+        arrowType: 'evaporation'
     },
     {
         name: "Transpirasi",
         emoji: "🌱",
         title: "🌱 TRANSPIRASI - Penguapan Air dari Tumbuhan",
         description: "Transpirasi adalah penguapan air yang berasal dari jaringan tumbuh-tumbuhan. Air diserap oleh akar dan dilepaskan melalui daun dalam bentuk uap air.",
-        details: "Tumbuhan menyerap air dari tanah melalui akar. Air ini kemudian diangkut ke seluruh jaringan tumbuhan dan dilepaskan melalui stomata (pori-pori kecil di daun) dalam bentuk uap air. Proses ini disebut transpirasi.",
-        animation: "transpiration"
+        details: "Tumbuhan menyerap air dari tanah melalui akar. Air ini kemudian diangkut ke seluruh jaringan tumbuhan dan dilepaskan melalui stomata (pori-pori kecil di daun) dalam bentuk uap air.",
+        labels: ['transpiration'],
+        arrowType: 'transpiration'
     },
     {
         name: "Kondensasi",
         emoji: "❄️",
         title: "❄️ KONDENSASI - Pembentukan Awan",
         description: "Kondensasi adalah perubahan uap air di atmosfer menjadi titik-titik air atau awan. Uap air yang naik bertemu dengan udara dingin dan berubah menjadi tetesan air kecil.",
-        details: "Ketika uap air mencapai ketinggian yang lebih tinggi, suhunya menurun. Uap air kemudian berubah bentuk menjadi tetesan air kecil. Tetesan-tetesan air ini berkumpul dan membentuk awan yang kita lihat di langit.",
-        animation: "condensation"
+        details: "Ketika uap air mencapai ketinggian yang lebih tinggi, suhunya menurun. Uap air kemudian berubah bentuk menjadi tetesan air kecil yang berkumpul dan membentuk awan.",
+        labels: ['condensation'],
+        arrowType: 'condensation'
     },
     {
         name: "Presipitasi",
         emoji: "🌧️",
         title: "🌧️ PRESIPITASI - Hujan Turun ke Bumi",
         description: "Presipitasi adalah proses turunnya air dari awan ke bumi dalam bentuk hujan. Ketika awan menjadi terlalu berat, air jatuh kembali ke permukaan bumi.",
-        details: "Tetesan air dalam awan terus bertambah dan menjadi semakin berat. Ketika sudah cukup berat, air tidak dapat lagi bertahan di udara dan jatuh kembali ke bumi dalam bentuk hujan. Air hujan ini sangat penting untuk kehidupan di bumi.",
-        animation: "precipitation"
+        details: "Tetesan air dalam awan terus bertambah dan menjadi semakin berat. Ketika sudah cukup berat, air tidak dapat lagi bertahan di udara dan jatuh kembali ke bumi dalam bentuk hujan.",
+        labels: ['precipitation'],
+        arrowType: 'precipitation'
     },
     {
         name: "Infiltrasi",
         emoji: "⬇️",
         title: "⬇️ INFILTRASI - Air Meresap ke Tanah",
         description: "Infiltrasi adalah proses meresapnya air hujan ke dalam pori-pori tanah. Air ini menjadi air tanah yang digunakan oleh tumbuhan dan makhluk hidup lainnya.",
-        details: "Air hujan yang jatuh ke bumi meresap ke dalam lapisan tanah. Sebagian air disimpan dalam pori-pori tanah dan digunakan oleh akar tumbuhan. Sebagian air lainnya mengalir melalui lapisan tanah dan kembali ke laut. Dengan demikian, siklus air terus berulang.",
-        animation: "infiltration"
+        details: "Air hujan yang jatuh ke bumi meresap ke dalam lapisan tanah. Sebagian air disimpan dalam pori-pori tanah dan digunakan oleh akar tumbuhan. Sebagian lainnya mengalir kembali ke laut.",
+        labels: ['infiltration', 'collection'],
+        arrowType: 'infiltration'
     }
 ];
 
 let currentProcessIndex = -1;
 
-function showProcess(index) {
-    currentProcessIndex = index;
-    const process = processes[index];
-    
-    // Update status
-    document.getElementById("statusTitle").innerHTML = process.title;
-    document.getElementById("statusDescription").innerHTML = process.description;
-    document.getElementById("statusDetails").innerHTML = "💡 " + process.details;
-    
-    // Remove active class from all buttons
-    document.querySelectorAll(".step-btn").forEach(btn => btn.classList.remove("active"));
-    
-    // Add active class to clicked button
-    document.querySelectorAll(".step-btn")[index].classList.add("active");
-    
-    // Clear previous animations
+function hideAllLabels() {
+    document.querySelectorAll('.label').forEach(label => {
+        label.classList.remove('active');
+    });
+}
+
+function showLabels(labelIds) {
+    labelIds.forEach(labelId => {
+        const element = document.getElementById(`label-${labelId}`);
+        if (element) element.classList.add('active');
+    });
+}
+
+function clearAnimations() {
     const scene = document.getElementById("scene");
-    document.querySelectorAll(".evaporation, .transpiration, .rain, .infiltrasi").forEach(el => el.remove());
-    
-    // Run animation based on process
-    switch(index) {
-        case 0: // Evaporation
-            animateEvaporation();
-            break;
-        case 1: // Transpiration
-            animateTranspiration();
-            break;
-        case 2: // Condensation
-            animateCondensation();
-            break;
-        case 3: // Precipitation
-            animatePrecipitation();
-            break;
-        case 4: // Infiltration
-            animateInfiltration();
-            break;
-    }
+    document.querySelectorAll('.vapor, .rain, .infiltration').forEach(el => el.remove());
 }
 
 function animateEvaporation() {
+    clearAnimations();
+    showLabels(['evaporation']);
     const scene = document.getElementById("scene");
-    for (let i = 0; i < 8; i++) {
+    
+    for (let i = 0; i < 12; i++) {
         setTimeout(() => {
             const vapor = document.createElement("div");
-            vapor.className = "evaporation";
+            vapor.className = "vapor";
             vapor.innerHTML = "💨";
-            vapor.style.left = (20 + Math.random() * 30) + "%";
+            vapor.style.left = (5 + Math.random() * 35) + "%";
+            vapor.style.bottom = "80px";
             scene.appendChild(vapor);
-            setTimeout(() => vapor.remove(), 3000);
-        }, i * 250);
+            setTimeout(() => vapor.remove(), 2500);
+        }, i * 150);
     }
 }
 
 function animateTranspiration() {
+    clearAnimations();
+    showLabels(['transpiration']);
     const scene = document.getElementById("scene");
-    const trees = document.querySelectorAll(".tree");
+    const trees = [document.getElementById("tree1"), document.getElementById("tree2")];
     
-    trees.forEach(tree => {
-        const rect = tree.getBoundingClientRect();
-        const sceneRect = scene.getBoundingClientRect();
-        
-        for (let i = 0; i < 6; i++) {
+    trees.forEach((tree, treeIndex) => {
+        for (let i = 0; i < 8; i++) {
             setTimeout(() => {
                 const vapor = document.createElement("div");
-                vapor.className = "transpiration";
-                vapor.innerHTML = "🌫️";
-                vapor.style.left = (tree.style.left) || (Math.random() * 80 + 10) + "%";
-                vapor.style.bottom = "200px";
+                vapor.className = "vapor";
+                vapor.innerHTML = "💨";
+                const treePos = tree.style.left || tree.style.right;
+                const posValue = parseInt(treePos);
+                const isLeft = tree.style.left !== '';
+                
+                if (isLeft) {
+                    vapor.style.left = posValue + 3 + "%";
+                } else {
+                    vapor.style.right = posValue + 3 + "%";
+                }
+                
+                vapor.style.bottom = "120px";
                 scene.appendChild(vapor);
-                setTimeout(() => vapor.remove(), 3000);
-            }, i * 300);
+                setTimeout(() => vapor.remove(), 2500);
+            }, i * 200);
         }
     });
 }
 
 function animateCondensation() {
-    const cloud = document.getElementById("cloud");
-    cloud.classList.add("active");
+    clearAnimations();
+    showLabels(['condensation']);
+    const clouds = [document.getElementById("cloud1"), document.getElementById("cloud2")];
+    
+    clouds.forEach(cloud => {
+        cloud.style.filter = "drop-shadow(0 0 20px rgba(255, 255, 255, 0.8))";
+    });
     
     setTimeout(() => {
-        cloud.classList.remove("active");
-    }, 3000);
+        clouds.forEach(cloud => {
+            cloud.style.filter = "";
+        });
+    }, 2500);
 }
 
 function animatePrecipitation() {
+    clearAnimations();
+    showLabels(['precipitation']);
     const scene = document.getElementById("scene");
-    for (let i = 0; i < 25; i++) {
+    
+    for (let i = 0; i < 30; i++) {
         setTimeout(() => {
             const rain = document.createElement("div");
             rain.className = "rain";
             rain.innerHTML = "💧";
-            rain.style.top = "100px";
-            rain.style.right = (5 + Math.random() * 85) + "%";
+            rain.style.top = (80 + Math.random() * 50) + "px";
+            rain.style.left = (50 + Math.random() * 40) + "%";
             scene.appendChild(rain);
-            setTimeout(() => rain.remove(), 2000);
-        }, i * 80);
+            setTimeout(() => rain.remove(), 1500);
+        }, i * 50);
     }
 }
 
 function animateInfiltration() {
+    clearAnimations();
+    showLabels(['infiltration', 'collection']);
     const scene = document.getElementById("scene");
     
     for (let i = 0; i < 15; i++) {
         setTimeout(() => {
-            const infiltrasi = document.createElement("div");
-            infiltrasi.className = "infiltrasi";
-            infiltrasi.innerHTML = "💧";
-            infiltrasi.style.bottom = "80px";
-            infiltrasi.style.left = (10 + Math.random() * 80) + "%";
-            scene.appendChild(infiltrasi);
-            setTimeout(() => infiltrasi.remove(), 2000);
+            const infil = document.createElement("div");
+            infil.className = "infiltration";
+            infil.innerHTML = "💧";
+            infil.style.left = (20 + Math.random() * 60) + "%";
+            infil.style.bottom = "80px";
+            scene.appendChild(infil);
+            setTimeout(() => infil.remove(), 1500);
         }, i * 100);
+    }
+}
+
+function showProcess(index) {
+    currentProcessIndex = index;
+    const process = processes[index];
+    
+    // Update info panel
+    document.getElementById("infoTitle").innerHTML = process.title;
+    document.getElementById("infoDescription").innerHTML = process.description;
+    document.getElementById("infoDetail").innerHTML = "💡 " + process.details;
+    
+    // Update buttons
+    document.querySelectorAll(".step-btn").forEach(btn => btn.classList.remove("active"));
+    document.querySelectorAll(".step-btn")[index].classList.add("active");
+    
+    // Hide all labels first
+    hideAllLabels();
+    
+    // Run animation
+    switch(index) {
+        case 0:
+            animateEvaporation();
+            break;
+        case 1:
+            animateTranspiration();
+            break;
+        case 2:
+            animateCondensation();
+            break;
+        case 3:
+            animatePrecipitation();
+            break;
+        case 4:
+            animateInfiltration();
+            break;
     }
 }
 
 function resetSimulation() {
     currentProcessIndex = -1;
     
-    // Remove active class from all buttons
+    // Remove active class
     document.querySelectorAll(".step-btn").forEach(btn => btn.classList.remove("active"));
     
-    // Reset status
-    document.getElementById("statusTitle").innerHTML = "👋 Selamat Datang";
-    document.getElementById("statusDescription").innerHTML = 
+    // Reset info panel
+    document.getElementById("infoTitle").innerHTML = "👋 Selamat Datang";
+    document.getElementById("infoDescription").innerHTML = 
         "Pilih salah satu tombol di bawah untuk melihat proses daur air. Setiap tombol akan menampilkan animasi dan penjelasan lengkap tentang tahap daur air tersebut.";
-    document.getElementById("statusDetails").innerHTML = "";
+    document.getElementById("infoDetail").innerHTML = "";
+    
+    // Hide labels
+    hideAllLabels();
     
     // Clear animations
-    const scene = document.getElementById("scene");
-    document.querySelectorAll(".evaporation, .transpiration, .rain, .infiltrasi").forEach(el => el.remove());
-    
-    // Reset cloud
-    const cloud = document.getElementById("cloud");
-    cloud.classList.remove("active");
-    
-    // Hide quiz
-    document.getElementById("quizSection").classList.remove("active");
+    clearAnimations();
 }
 
-// Initialize welcome message
+// Initialize
 window.addEventListener('load', () => {
     resetSimulation();
 });
