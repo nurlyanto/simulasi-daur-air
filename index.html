@@ -3,165 +3,823 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulasi Daur Air</title>
+<title>Simulasi Daur Air Interaktif</title>
 
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: linear-gradient(#87ceeb, #e0f6ff);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 30px;
 }
 
 h1 {
     color: #004d66;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 2.5em;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 1.1em;
 }
 
 #scene {
     position: relative;
-    width: 800px;
-    height: 450px;
-    margin: auto;
-    border: 2px solid #ccc;
+    width: 100%;
+    height: 500px;
+    border: 3px solid #004d66;
+    border-radius: 15px;
     overflow: hidden;
-    background: #cceeff;
+    background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 70%, #87ceeb 100%);
+    margin: 20px 0;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Sun */
 #sun {
     position: absolute;
-    top: 20px;
+    top: 30px;
     left: 50px;
-    width: 80px;
-    height: 80px;
-    background: gold;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at 30% 30%, #ffff99, #ffcc00);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255, 200, 0, 0.8);
+    animation: sunRotate 8s linear infinite;
+}
+
+#sun::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 100, 0.3), transparent);
     border-radius: 50%;
 }
 
-#cloud {
+#sun::after {
+    content: '';
     position: absolute;
-    top: 50px;
-    right: 150px;
-    font-size: 80px;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 15px solid #ffcc00;
+    opacity: 0.7;
 }
 
+@keyframes sunRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Cloud */
+#cloud {
+    position: absolute;
+    top: 60px;
+    right: 100px;
+    font-size: 100px;
+    z-index: 10;
+}
+
+/* Mountain */
+.mountain {
+    position: absolute;
+    bottom: 120px;
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-bottom: 200px solid #8b7355;
+}
+
+.mountain.left {
+    left: -50px;
+}
+
+.mountain.right {
+    right: -50px;
+}
+
+/* Water */
 #water {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 100px;
-    background: #2196f3;
+    height: 120px;
+    background: linear-gradient(180deg, #1e88e5 0%, #0d47a1 100%);
+    border-top: 3px solid #00796b;
 }
 
+.water-wave {
+    position: absolute;
+    top: 0;
+    width: 200%;
+    height: 20px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 20"><defs><pattern id="wave" x="0" y="0" width="120" height="20" patternUnits="userSpaceOnUse"><path d="M0,10 Q30,0 60,10 T120,10" stroke="%231e88e5" fill="none"/></pattern></defs><rect width="1200" height="20" fill="url(%23wave)"/></svg>');
+    animation: wave 3s linear infinite;
+}
+
+@keyframes wave {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-120px); }
+}
+
+/* Labels */
+.label {
+    position: absolute;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    border: 2px solid #004d66;
+    text-align: center;
+    color: #004d66;
+    z-index: 5;
+}
+
+#label-penguapan {
+    bottom: 150px;
+    left: 30%;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+#label-kondensasi {
+    top: 20px;
+    right: 50px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+#label-presipitasi {
+    top: 200px;
+    right: 100px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+#label-infiltrasi {
+    bottom: 140px;
+    left: 50%;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.label.active {
+    opacity: 1;
+}
+
+/* Animations */
 .vapor {
     position: absolute;
     bottom: 100px;
-    left: 350px;
+    left: 30%;
     font-size: 24px;
     color: white;
-    animation: naik 4s linear forwards;
+    animation: naik 3s linear forwards;
+    z-index: 3;
 }
 
 .rain {
     position: absolute;
-    top: 120px;
-    right: 200px;
     font-size: 20px;
-    color: blue;
+    color: #1e88e5;
     animation: turun 2s linear forwards;
+    z-index: 3;
 }
 
 @keyframes naik {
-    from {
-        transform: translateY(0);
+    0% {
+        transform: translateY(0) scale(1);
         opacity: 1;
     }
-    to {
-        transform: translateY(-180px);
+    100% {
+        transform: translateY(-250px) scale(0.8);
         opacity: 0;
     }
 }
 
 @keyframes turun {
-    from {
+    0% {
         transform: translateY(0);
+        opacity: 1;
     }
-    to {
-        transform: translateY(220px);
+    100% {
+        transform: translateY(200px);
+        opacity: 0;
     }
 }
 
-button {
-    padding: 10px 20px;
+@keyframes infiltrasi {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+}
+
+.infiltrasi {
+    position: absolute;
     font-size: 16px;
-    margin: 10px;
+    animation: infiltrasi 2s linear forwards;
+}
+
+/* Control Panel */
+.control-panel {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button.step-btn.active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+button.reset-btn {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Status Display */
+#status {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #004d66;
+    padding: 15px;
+    background: #e0f6ff;
+    border-radius: 10px;
+    border-left: 5px solid #004d66;
+    margin: 20px 0;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Quiz Section */
+.quiz-section {
+    display: none;
+    margin-top: 30px;
+    padding: 20px;
+    background: #f0f8ff;
+    border-radius: 15px;
+    border: 3px solid #004d66;
+}
+
+.quiz-section.active {
+    display: block;
+}
+
+.quiz-section h2 {
+    color: #004d66;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.quiz-question {
+    background: white;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-question h3 {
+    color: #004d66;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.quiz-option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 8px 0;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quiz-option:hover {
+    background: #e0f6ff;
+    border-color: #004d66;
+}
+
+.quiz-option input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.quiz-option.correct {
+    background: #c8e6c9;
+    border-color: #4caf50;
+}
+
+.quiz-option.incorrect {
+    background: #ffcdd2;
+    border-color: #f44336;
+}
+
+/* Score Display */
+.score-display {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.score-display h3 {
+    color: #004d66;
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+.score-value {
+    font-size: 3em;
+    font-weight: bold;
+    color: #764ba2;
+    margin: 10px 0;
+}
+
+.score-message {
+    font-size: 1.1em;
+    color: #333;
+    margin: 10px 0;
+}
+
+.medal {
+    font-size: 4em;
+    margin: 10px 0;
+}
+
+/* Narration */
+.narration {
+    background: #fff9c4;
+    border-left: 4px solid #fbc02d;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f57f17;
+    display: none;
+}
+
+.narration.active {
+    display: block;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    #scene {
+        height: 350px;
+    }
+
+    button {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    #status {
+        font-size: 16px;
+    }
+
+    .label {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
 }
 </style>
 </head>
 <body>
 
-<h1>🌧️ Simulasi Daur Air</h1>
+<div class="container">
+    <h1>🌧️ Simulasi Daur Air Interaktif</h1>
+    <p class="subtitle">Pelajari siklus air yang menakjubkan!</p>
 
-<button onclick="mulaiSimulasi()">Mulai Simulasi</button>
+    <div class="narration" id="narration"></div>
 
-<p id="status">Klik tombol untuk memulai.</p>
+    <div id="scene">
+        <div id="sun"></div>
+        <div id="cloud">☁️</div>
+        <div class="mountain left"></div>
+        <div class="mountain right"></div>
+        <div id="water">
+            <div class="water-wave"></div>
+        </div>
 
-<div id="scene">
-    <div id="sun"></div>
-    <div id="cloud">☁️</div>
-    <div id="water"></div>
+        <div class="label" id="label-penguapan">
+            <strong>☀️ PENGUAPAN</strong><br>
+            Air menguap menjadi uap air
+        </div>
+        <div class="label" id="label-kondensasi">
+            <strong>❄️ KONDENSASI</strong><br>
+            Uap air membentuk awan
+        </div>
+        <div class="label" id="label-presipitasi">
+            <strong>🌧️ PRESIPITASI</strong><br>
+            Hujan turun ke bumi
+        </div>
+        <div class="label" id="label-infiltrasi">
+            <strong>⬇️ INFILTRASI</strong><br>
+            Air meresap ke tanah
+        </div>
+    </div>
+
+    <p id="status">👋 Selamat datang! Klik tombol "Mulai Simulasi Langkah Demi Langkah" untuk memulai.</p>
+
+    <div class="control-panel">
+        <button onclick="startStepByStep()">▶️ Mulai Simulasi Langkah Demi Langkah</button>
+        <button onclick="startAutoSimulation()">⏩ Simulasi Otomatis</button>
+        <button class="reset-btn" onclick="resetSimulation()">🔄 Reset</button>
+        <button onclick="toggleSound()" id="soundBtn">🔊 Suara: Aktif</button>
+    </div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>📝 Kuis Daur Air</h2>
+        <div id="quizContainer"></div>
+        <div class="score-display" id="scoreDisplay"></div>
+    </div>
 </div>
 
 <script>
+let currentStep = 0;
+let soundEnabled = true;
+let quizAnswers = {};
+const steps = [
+    {
+        title: "Penguapan ☀️",
+        description: "Matahari memanaskan air di laut, danau, dan sungai. Air berubah menjadi uap air tak terlihat.",
+        narration: "Langkah pertama adalah penguapan. Matahari dengan panas teriknya memanaskan permukaan air. Air ini kemudian menguap dan berubah menjadi uap air yang tidak terlihat di mata kita."
+    },
+    {
+        title: "Kondensasi ❄️",
+        description: "Uap air naik ke atas dan bertemu udara dingin. Uap air berubah menjadi tetesan air kecil.",
+        narration: "Langkah kedua adalah kondensasi. Uap air yang naik bertemu dengan udara dingin di ketinggian. Uap ini kemudian mengubah bentuknya menjadi tetesan air kecil yang membentuk awan."
+    },
+    {
+        title: "Presipitasi 🌧️",
+        description: "Tetesan air dalam awan menjadi semakin banyak dan berat. Awan turun sebagai hujan.",
+        narration: "Langkah ketiga adalah presipitasi. Tetesan air dalam awan terus berkumpul dan menjadi semakin berat. Ketika sudah cukup berat, air ini jatuh kembali ke bumi dalam bentuk hujan."
+    },
+    {
+        title: "Infiltrasi ⬇️",
+        description: "Air hujan meresap ke dalam tanah. Sebagian air disimpan oleh tanah dan tumbuhan, sebagian mengalir ke laut.",
+        narration: "Langkah keempat adalah infiltrasi. Air hujan yang jatuh ke bumi meresap ke dalam tanah. Air ini akan digunakan oleh tumbuhan atau mengalir ke sungai yang membawanya kembali ke laut. Siklus pun dimulai kembali!"
+    }
+];
 
-function mulaiSimulasi() {
+function speak(text) {
+    if (!soundEnabled || !('speechSynthesis' in window)) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'id-ID';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+}
 
+function updateNarration(text) {
+    const narration = document.getElementById("narration");
+    narration.innerHTML = "🎤 " + text;
+    narration.classList.add("active");
+    speak(text);
+    setTimeout(() => narration.classList.remove("active"), 5000);
+}
+
+function setStatus(text) {
+    document.getElementById("status").innerHTML = text;
+}
+
+function showLabel(labelId) {
+    document.getElementById(labelId).classList.add("active");
+}
+
+function hideLabel(labelId) {
+    document.getElementById(labelId).classList.remove("active");
+}
+
+function hideAllLabels() {
+    document.getElementById("label-penguapan").classList.remove("active");
+    document.getElementById("label-kondensasi").classList.remove("active");
+    document.getElementById("label-presipitasi").classList.remove("active");
+    document.getElementById("label-infiltrasi").classList.remove("active");
+}
+
+function createVapor() {
     const scene = document.getElementById("scene");
-    const status = document.getElementById("status");
-
-    status.innerHTML =
-    "☀️ Matahari memanaskan air. Terjadi penguapan.";
-
     const vapor = document.createElement("div");
     vapor.className = "vapor";
     vapor.innerHTML = "☁";
+    vapor.style.left = (25 + Math.random() * 20) + "%";
     scene.appendChild(vapor);
-
-    setTimeout(() => {
-
-        status.innerHTML =
-        "☁️ Uap air naik dan membentuk awan (kondensasi).";
-
-    }, 4000);
-
-    setTimeout(() => {
-
-        status.innerHTML =
-        "🌧️ Awan menjadi berat dan turun sebagai hujan.";
-
-        for (let i = 0; i < 20; i++) {
-
-            const rain = document.createElement("div");
-
-            rain.className = "rain";
-            rain.innerHTML = "💧";
-
-            rain.style.right =
-            (150 + Math.random() * 250) + "px";
-
-            scene.appendChild(rain);
-
-            setTimeout(() => rain.remove(), 2000);
-        }
-
-    }, 6000);
-
-    setTimeout(() => {
-
-        status.innerHTML =
-        "✅ Air kembali ke permukaan dan siklus berulang.";
-
-    }, 8500);
+    
+    setTimeout(() => vapor.remove(), 3000);
 }
 
+function createRain() {
+    const scene = document.getElementById("scene");
+    for (let i = 0; i < 25; i++) {
+        const rain = document.createElement("div");
+        rain.className = "rain";
+        rain.innerHTML = "💧";
+        rain.style.top = "100px";
+        rain.style.right = (5 + Math.random() * 85) + "%";
+        scene.appendChild(rain);
+        setTimeout(() => rain.remove(), 2000);
+    }
+}
+
+function createInfiltrasi() {
+    const scene = document.getElementById("scene");
+    const waterElement = document.getElementById("water");
+    
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            const infiltrasi = document.createElement("div");
+            infiltrasi.className = "infiltrasi";
+            infiltrasi.innerHTML = "💧";
+            infiltrasi.style.bottom = "80px";
+            infiltrasi.style.left = (10 + Math.random() * 80) + "%";
+            scene.appendChild(infiltrasi);
+            setTimeout(() => infiltrasi.remove(), 2000);
+        }, i * 100);
+    }
+}
+
+function startStepByStep() {
+    resetSimulation();
+    currentStep = 0;
+    showStep();
+}
+
+function showStep() {
+    if (currentStep >= steps.length) {
+        endSimulation();
+        return;
+    }
+
+    const step = steps[currentStep];
+    hideAllLabels();
+    
+    setStatus(`<strong>${step.title}</strong><br>${step.description}`);
+    updateNarration(step.narration);
+
+    if (currentStep === 0) {
+        showLabel("label-penguapan");
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => createVapor(), i * 300);
+        }
+    } else if (currentStep === 1) {
+        showLabel("label-kondensasi");
+    } else if (currentStep === 2) {
+        showLabel("label-presipitasi");
+        createRain();
+    } else if (currentStep === 3) {
+        showLabel("label-infiltrasi");
+        createInfiltrasi();
+    }
+
+    currentStep++;
+}
+
+function nextStep() {
+    showStep();
+}
+
+function startAutoSimulation() {
+    resetSimulation();
+    currentStep = 0;
+    
+    function autoStep() {
+        if (currentStep < steps.length) {
+            showStep();
+            setTimeout(autoStep, 4500);
+        }
+    }
+
+    autoStep();
+}
+
+function endSimulation() {
+    hideAllLabels();
+    setStatus("✅ Simulasi selesai! Saatnya menjawab kuis untuk menguji pemahamanmu.");
+    setTimeout(showQuiz, 1000);
+}
+
+function resetSimulation() {
+    currentStep = 0;
+    hideAllLabels();
+    setStatus("👋 Selamat datang! Klik tombol \"Mulai Simulasi Langkah Demi Langkah\" untuk memulai.");
+    document.getElementById("quizSection").classList.remove("active");
+    
+    const scene = document.getElementById("scene");
+    document.querySelectorAll(".vapor, .rain, .infiltrasi").forEach(el => el.remove());
+    
+    speechSynthesis.cancel();
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById("soundBtn");
+    btn.textContent = soundEnabled ? "🔊 Suara: Aktif" : "🔇 Suara: Mati";
+}
+
+function showQuiz() {
+    const quizSection = document.getElementById("quizSection");
+    const quizContainer = document.getElementById("quizContainer");
+    
+    const quizData = [
+        {
+            question: "Proses apa yang terjadi ketika air menguap dari laut?",
+            options: ["Infiltrasi", "Penguapan", "Kondensasi", "Presipitasi"],
+            correct: 1
+        },
+        {
+            question: "Apa nama proses ketika uap air menjadi tetesan air di ketinggian?",
+            options: ["Penguapan", "Presipitasi", "Kondensasi", "Evaporasi"],
+            correct: 2
+        },
+        {
+            question: "Hujan adalah contoh dari proses mana?",
+            options: ["Kondensasi", "Penguapan", "Presipitasi", "Infiltrasi"],
+            correct: 2
+        },
+        {
+            question: "Air yang meresap ke dalam tanah disebut...",
+            options: ["Penguapan", "Kondensasi", "Presipitasi", "Infiltrasi"],
+            correct: 3
+        },
+        {
+            question: "Berapa banyak langkah dalam siklus air?",
+            options: ["2", "3", "4", "5"],
+            correct: 2
+        }
+    ];
+
+    quizContainer.innerHTML = '';
+    quizData.forEach((quiz, index) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "quiz-question";
+        questionDiv.innerHTML = `
+            <h3>Pertanyaan ${index + 1}: ${quiz.question}</h3>
+            ${quiz.options.map((option, optIndex) => `
+                <label class="quiz-option">
+                    <input type="radio" name="q${index}" value="${optIndex}" 
+                           onchange="handleAnswer(${index}, ${optIndex}, ${quiz.correct})">
+                    ${option}
+                </label>
+            `).join('')}
+        `;
+        quizContainer.appendChild(questionDiv);
+    });
+
+    quizAnswers = {};
+    quizSection.classList.add("active");
+    
+    setStatus("📝 Jawab semua pertanyaan dengan benar!");
+    updateNarration("Sekarang mari kita uji pemahamanmu dengan kuis ini!");
+}
+
+function handleAnswer(questionIndex, selectedIndex, correctIndex) {
+    quizAnswers[questionIndex] = selectedIndex === correctIndex;
+    
+    const options = document.querySelectorAll(`input[name="q${questionIndex}"]`);
+    const labels = document.querySelectorAll(`input[name="q${questionIndex}"]`).forEach((input, idx) => {
+        const label = input.parentElement;
+        label.classList.remove("correct", "incorrect");
+        if (idx === correctIndex) {
+            label.classList.add("correct");
+        } else if (idx === selectedIndex) {
+            label.classList.add("incorrect");
+        }
+    });
+
+    const allAnswered = Object.keys(quizAnswers).length === 5;
+    if (allAnswered) {
+        setTimeout(showScore, 1000);
+    }
+}
+
+function showScore() {
+    const score = Object.values(quizAnswers).filter(v => v).length;
+    const total = 5;
+    const percentage = (score / total) * 100;
+    
+    let medal = '';
+    let message = '';
+    
+    if (percentage === 100) {
+        medal = '🏆';
+        message = 'Sempurna! Kamu benar-benar memahami daur air!';
+    } else if (percentage >= 80) {
+        medal = '🥇';
+        message = 'Luar biasa! Pengetahuanmu tentang daur air sangat bagus!';
+    } else if (percentage >= 60) {
+        medal = '🥈';
+        message = 'Bagus! Tapi coba pelajari lagi beberapa bagian.';
+    } else if (percentage >= 40) {
+        medal = '🥉';
+        message = 'Cukup baik! Pelajari lagi untuk hasil yang lebih baik.';
+    } else {
+        medal = '📚';
+        message = 'Ayo pelajari lagi! Kamu pasti bisa!';
+    }
+
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    scoreDisplay.innerHTML = `
+        <div class="medal">${medal}</div>
+        <h3>Skor Kamu</h3>
+        <div class="score-value">${score}/${total}</div>
+        <div class="score-message">${percentage.toFixed(0)}% - ${message}</div>
+        <button onclick="startStepByStep()" style="margin-top: 20px;">Coba Lagi</button>
+    `;
+
+    updateNarration(`Skor kamu adalah ${score} dari ${total}. ${message}`);
+}
+
+// Initialize
+window.addEventListener('load', () => {
+    speak("Selamat datang di simulasi daur air interaktif. Klik tombol mulai simulasi untuk memulai.");
+});
 </script>
 
 </body>
