@@ -1,1 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi Daur Air</title>
 
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(#87ceeb, #e0f6ff);
+}
+
+h1 {
+    color: #004d66;
+}
+
+#scene {
+    position: relative;
+    width: 800px;
+    height: 450px;
+    margin: auto;
+    border: 2px solid #ccc;
+    overflow: hidden;
+    background: #cceeff;
+}
+
+#sun {
+    position: absolute;
+    top: 20px;
+    left: 50px;
+    width: 80px;
+    height: 80px;
+    background: gold;
+    border-radius: 50%;
+}
+
+#cloud {
+    position: absolute;
+    top: 50px;
+    right: 150px;
+    font-size: 80px;
+}
+
+#water {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    background: #2196f3;
+}
+
+.vapor {
+    position: absolute;
+    bottom: 100px;
+    left: 350px;
+    font-size: 24px;
+    color: white;
+    animation: naik 4s linear forwards;
+}
+
+.rain {
+    position: absolute;
+    top: 120px;
+    right: 200px;
+    font-size: 20px;
+    color: blue;
+    animation: turun 2s linear forwards;
+}
+
+@keyframes naik {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-180px);
+        opacity: 0;
+    }
+}
+
+@keyframes turun {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(220px);
+    }
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px;
+}
+</style>
+</head>
+<body>
+
+<h1>🌧️ Simulasi Daur Air</h1>
+
+<button onclick="mulaiSimulasi()">Mulai Simulasi</button>
+
+<p id="status">Klik tombol untuk memulai.</p>
+
+<div id="scene">
+    <div id="sun"></div>
+    <div id="cloud">☁️</div>
+    <div id="water"></div>
+</div>
+
+<script>
+
+function mulaiSimulasi() {
+
+    const scene = document.getElementById("scene");
+    const status = document.getElementById("status");
+
+    status.innerHTML =
+    "☀️ Matahari memanaskan air. Terjadi penguapan.";
+
+    const vapor = document.createElement("div");
+    vapor.className = "vapor";
+    vapor.innerHTML = "☁";
+    scene.appendChild(vapor);
+
+    setTimeout(() => {
+
+        status.innerHTML =
+        "☁️ Uap air naik dan membentuk awan (kondensasi).";
+
+    }, 4000);
+
+    setTimeout(() => {
+
+        status.innerHTML =
+        "🌧️ Awan menjadi berat dan turun sebagai hujan.";
+
+        for (let i = 0; i < 20; i++) {
+
+            const rain = document.createElement("div");
+
+            rain.className = "rain";
+            rain.innerHTML = "💧";
+
+            rain.style.right =
+            (150 + Math.random() * 250) + "px";
+
+            scene.appendChild(rain);
+
+            setTimeout(() => rain.remove(), 2000);
+        }
+
+    }, 6000);
+
+    setTimeout(() => {
+
+        status.innerHTML =
+        "✅ Air kembali ke permukaan dan siklus berulang.";
+
+    }, 8500);
+}
+
+</script>
+
+</body>
+</html>
