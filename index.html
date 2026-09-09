@@ -171,7 +171,7 @@ h1 {
     bottom: 0;
     width: 200%;
     height: 20px;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 20"><defs><pattern id="wave" x="0" y="0" width="120" height="20" patternUnits="userSpaceOnUse"><path d="M0,10 Q30,0 60,10 T120,10" stroke="%231e88e5" fill="none"/></pattern></defs><rect width="1200" height="20" fill="url(%23wave)"/></svg>');
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 20"><defs><pattern id="wave" x="0" y="0" width="120" height="20" patternUnits="userSpaceOnUse"><path d[...]
     animation: wave 3s linear infinite;
 }
 
@@ -491,6 +491,10 @@ button:disabled {
             <span style="font-size: 24px;">⬇️</span>
             <span>Infiltrasi</span>
         </button>
+        <button class="step-btn" id="fullCycleBtn" onclick="runFullCycle()">
+            <span style="font-size: 24px;">🔄</span>
+            <span>Jalankan Siklus Lengkap</span>
+        </button>
         <button class="reset-btn" onclick="resetSimulation()">🔄 Reset Simulasi</button>
     </div>
 </div>
@@ -502,7 +506,7 @@ const processes = [
         emoji: "☀️",
         title: "☀️ EVAPORASI - Penguapan Air dari Permukaan",
         description: "Evaporasi adalah proses penguapan air di laut, sungai, dan danau karena panas matahari. Air berubah dari bentuk cair menjadi uap air yang tidak terlihat.",
-        details: "Matahari memanaskan permukaan air dengan energi panas. Air ini kemudian menguap dan naik ke atmosfer. Proses ini adalah tahap pertama siklus air yang penting untuk menjaga keseimbangan air di bumi.",
+        details: "Matahari memanaskan permukaan air dengan energi panas. Air ini kemudian menguap dan naik ke atmosfer. Proses ini adalah tahap pertama siklus air yang penting untuk menjaga keseimbang[...]
         labels: ['evaporation'],
         arrowType: 'evaporation'
     },
@@ -538,13 +542,14 @@ const processes = [
         emoji: "⬇️",
         title: "⬇️ INFILTRASI - Air Meresap ke Tanah",
         description: "Infiltrasi adalah proses meresapnya air hujan ke dalam pori-pori tanah. Air ini menjadi air tanah yang digunakan oleh tumbuhan dan makhluk hidup lainnya.",
-        details: "Air hujan yang jatuh ke bumi meresap ke dalam lapisan tanah. Sebagian air disimpan dalam pori-pori tanah dan digunakan oleh akar tumbuhan. Sebagian lainnya mengalir kembali ke laut.",
+        details: "Air hujan yang jatuh ke bumi meresap ke dalam lapisan tanah. Sebagian air disimpan dalam pori-pori tanah dan digunakan oleh akar tumbuhan. Sebagian lainnya mengalir kembali ke laut."[...]
         labels: ['infiltration', 'collection'],
         arrowType: 'infiltration'
     }
 ];
 
 let currentProcessIndex = -1;
+let isCycleRunning = false;
 
 function hideAllLabels() {
     document.querySelectorAll('.label').forEach(label => {
@@ -700,11 +705,61 @@ function showProcess(index) {
     }
 }
 
+function runFullCycle() {
+    if (isCycleRunning) return;
+    
+    isCycleRunning = true;
+    const fullCycleBtn = document.getElementById("fullCycleBtn");
+    fullCycleBtn.disabled = true;
+    
+    document.getElementById("infoTitle").innerHTML = "🔄 SIKLUS AIR LENGKAP";
+    document.getElementById("infoDescription").innerHTML = "Saksikan semua tahap siklus air berjalan secara berurutan!";
+    document.getElementById("infoDetail").innerHTML = "💡 Semua proses akan ditampilkan satu per satu untuk menunjukkan bagaimana air bersirkulasi di bumi.";
+    
+    document.querySelectorAll(".step-btn").forEach(btn => btn.classList.remove("active"));
+    fullCycleBtn.classList.add("active");
+    
+    hideAllLabels();
+    
+    // Jalankan setiap proses dengan delay
+    // Evaporasi: 0-2500ms
+    animateEvaporation();
+    
+    // Transpirasi: 2600-5600ms
+    setTimeout(() => {
+        animateTranspiration();
+    }, 2600);
+    
+    // Kondensasi: 5700-8200ms
+    setTimeout(() => {
+        animateCondensation();
+    }, 5700);
+    
+    // Presipitasi: 8300-10000ms
+    setTimeout(() => {
+        animatePrecipitation();
+    }, 8300);
+    
+    // Infiltrasi: 10100-12000ms
+    setTimeout(() => {
+        animateInfiltration();
+    }, 10100);
+    
+    // Reset setelah siklus selesai
+    setTimeout(() => {
+        isCycleRunning = false;
+        fullCycleBtn.disabled = false;
+        resetSimulation();
+    }, 12100);
+}
+
 function resetSimulation() {
     currentProcessIndex = -1;
+    isCycleRunning = false;
     
     // Remove active class
     document.querySelectorAll(".step-btn").forEach(btn => btn.classList.remove("active"));
+    document.getElementById("fullCycleBtn").disabled = false;
     
     // Reset info panel
     document.getElementById("infoTitle").innerHTML = "👋 Selamat Datang";
